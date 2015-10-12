@@ -25,6 +25,8 @@ import java.lang.Math;
  */
 public class IsbnGen {
     public static void main(String[] args) throws IOException {
+        int prefix = 978;
+        int riik = 9985;
         String sisend;
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Sisesta kirjastustunnus vahemikest:"); // siia vahemike spikker
@@ -33,7 +35,10 @@ public class IsbnGen {
         System.out.println("Sain kätte" + ktunnus);
         String[] rtunnus = genRmt(ktunnus);
         for (int i=0;i<rtunnus.length;i++) {
-            System.out.println(rtunnus[i]);
+            //System.out.print(rtunnus[i]);
+            String number = "" + prefix + riik + ktunnus + rtunnus[i]; //kui ei pane "" ette, siis teeb mingi huvitava liitmise
+            int ktrlnumber = genKtrl(number);
+            System.out.format("%d-%d-%d-%s-%d%n",prefix,riik,ktunnus,rtunnus[i],ktrlnumber);
         }
     }
     public static String[] genRmt (int ktunnus) throws IOException {
@@ -66,11 +71,28 @@ public class IsbnGen {
         }
         return rtunnus;
     }
-   /*
-    public static int genKtrl (int number) throws IOException {
-          int ktrlnr;
+
+    public static int genKtrl (String number) throws IOException {
+        int ktrlnr;
+        int summa = 0;
+        //ktrl numbri algoritm
+        //korrutab iga paarispositsioonil oleva numbri 1-ga
+        //ja paaritul positsioonil 3-ga. Liidab kokku,
+        //leiab jäägi summa jagamisel 10-ga,
+        //lahutab saadud jäägi 10-st,
+        //saadud arvu 10-ga jagamisel saadud jääk ongi kontrollnumber
+        for (int i = 0;i < number.length(); i++){
+            int t = Character.getNumericValue(number.charAt(i));
+            if (i%2 == 0) {
+                t *= 1;
+            } else {
+                t *= 3;
+            }
+            summa += t;
+        }
+        ktrlnr = (10-(summa % 10)) % 10;
         return ktrlnr;
     }
-    */
+
 
 }
