@@ -69,6 +69,7 @@ public class IsbnGen extends Application {
                 }
                 number = prefix + "-" + riik + "-" + ktunnus[0] + "-" + rtunnus[i] + "-" + ktrlnumber;
                 numbrid.setText(numbrid.getText() + "\n" + number);
+                System.out.println(number);
             }
         });
         vbox.getChildren().addAll(seletus,input,nupp,numbrid);
