@@ -1,6 +1,12 @@
 package IsbnJagaja;
 
+import javafx.scene.control.TextField;
+import org.apache.derby.iapi.sql.*;
+
 import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 /**
@@ -108,7 +114,7 @@ public class Andmebaas {
         ArrayList<Kirjastaja> kirjastajalist = new ArrayList<Kirjastaja>();
         try {
             s = conn.createStatement();
-            ResultSet rs = s.executeQuery("SELECT * FROM kirjastaja");
+            ResultSet rs = s.executeQuery("SELECT * FROM kirjastaja ORDER by nimi");
             while(rs.next()) {
                 Kirjastaja kirjastaja = new Kirjastaja();
                 kirjastaja.setId(rs.getInt("id"));
@@ -121,4 +127,24 @@ public class Andmebaas {
         }
         return kirjastajalist;
     }
+
+    public int lisaKirjastaja(String uusnimi, String kontakt) {
+        try {
+            PreparedStatement psInsert = conn.prepareStatement("INSERT INTO kirjastaja(nimi,kontakt) VALUES(?,?)", Statement.RETURN_GENERATED_KEYS);
+            psInsert.setString(1,uusnimi);
+            psInsert.setString(2,kontakt);
+            int rows = psInsert.executeUpdate();
+
+            ResultSet rs = psInsert.getGeneratedKeys();
+            int id = 0;
+            if (rs.next()) {
+                id = rs.getInt(1);
+            }
+            return id;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 }
+/*DriverManager.getConnection("jdbc:derby:"+"db"+";shutdown=true");*/

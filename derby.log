@@ -1,13 +1,13 @@
 ----------------------------------------------------------------
-Sat Dec 12 15:26:28 EET 2015:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-0151-965f-06ca-000005ee55f0 
-on database directory /home/labner/Documents/java/i200projekt/isbnbaas with class loader sun.misc.Launcher$AppClassLoader@6f94fa3e 
-Loaded from file:/home/labner/Documents/java/db-derby-10.12.1.1-lib/lib/derby.jar
+Tue Dec 15 18:12:07 EET 2015:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-0151-a669-b8dc-000000b19678 
+on database directory /home/liina/i200/i200projekt/isbnbaas with class loader sun.misc.Launcher$AppClassLoader@481248 
+Loaded from file:/home/liina/Downloads/db-derby-10.12.1.1-lib/lib/derby.jar
 java.vendor=Oracle Corporation
-java.runtime.version=1.8.0_51-b16
-user.dir=/home/labner/Documents/java/i200projekt
+java.runtime.version=1.8.0_66-b17
+user.dir=/home/liina/i200/i200projekt
 os.name=Linux
-os.arch=amd64
-os.version=3.16.0-55-generic
+os.arch=i386
+os.version=3.13.0-71-generic
 derby.system.home=null
 Database Class Loader started - derby.database.classpath=''
