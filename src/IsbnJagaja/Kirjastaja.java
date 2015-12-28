@@ -32,4 +32,9 @@ public class Kirjastaja {
     public int getPlokk () {
         return jooksevplokk;
     }
+    //toString meetod, et oleks selge, millist Stringi kirjastajate combobox peab näitama
+    @Override
+    public String toString() {
+        return nimi;
+    }
 }

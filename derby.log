@@ -1,6 +1,6 @@
 ----------------------------------------------------------------
-Tue Dec 15 18:12:07 EET 2015:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-0151-a669-b8dc-000000b19678 
+Mon Dec 28 19:19:55 EET 2015:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-0151-e99a-7837-000000c21b38 
 on database directory /home/liina/i200/i200projekt/isbnbaas with class loader sun.misc.Launcher$AppClassLoader@481248 
 Loaded from file:/home/liina/Downloads/db-derby-10.12.1.1-lib/lib/derby.jar
 java.vendor=Oracle Corporation

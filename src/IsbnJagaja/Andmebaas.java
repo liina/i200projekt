@@ -23,7 +23,7 @@ public class Andmebaas {
 
     private void looYhendus() { // loob Connectioni ja teeb ab, kui seda veel ei ole
         try {
-            conn = DriverManager.getConnection("jdbc:derby:isbnbaas;create=true");
+            conn = DriverManager.getConnection("jdbc:derby:isbnbaas;create=true;territory=et_EE;collation=TERRITORY_BASED");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -64,9 +64,9 @@ public class Andmebaas {
 
             s.execute("CREATE TABLE plokk " +
                     "(id INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1)" +
-                    ", kirjastaja_id int, plokk int, " +
+                    ", kirjastaja_id int, plokk int, status boolean, " +
                     " PRIMARY KEY (id))");
-            s.execute("INSERT INTO plokk(kirjastaja_id,plokk) VALUES(1,800)");
+            s.execute("INSERT INTO plokk(kirjastaja_id,plokk,status) VALUES(1,800,TRUE)");
 
             s.execute("CREATE TABLE raamat " +
                     "(id INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1)" +
@@ -145,6 +145,20 @@ public class Andmebaas {
             e.printStackTrace();
         }
         return 0;
+    }
+
+
+    public void getJooksevPlokk(Kirjastaja kirjastaja) {
+        Statement s = null;
+        try {
+            s = conn.createStatement();
+            ResultSet rs = s.executeQuery("SELECT plokk FROM plokk WHERE kirjastaja_id="+kirjastaja.getId()+" AND status=TRUE");
+            while(rs.next()) {
+                kirjastaja.setPlokk(rs.getInt(1));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
 /*DriverManager.getConnection("jdbc:derby:"+"db"+";shutdown=true");*/
