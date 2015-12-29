@@ -45,7 +45,7 @@ public class Andmebaas {
                     int viimane = kirjastustunnused[i + 1];
                     int plokipikkus = (Integer.toString(esimene)).length(); //mitmekohaline number on
                     int rmtpikkus = 5 - plokipikkus; //raamatutunnuse pikkuseks jääb 5-kirjastustnnus
-                    int plokimaht = (int) Math.pow(10, rmtpikkus); //st mitu raamatutunnust ühe kirjastustunnuse kohta tuleb
+                    int plokimaht = (int) Math.pow(10, rmtpikkus); //st mitu raamatutunnust ühe kirjastustunnuse kohta tuleb, 10 [0-9] astmel kohtade arv
                     psInsert.setInt(1, prefix);
                     psInsert.setInt(2, maatunnus);
                     psInsert.setInt(3, esimene);
@@ -160,5 +160,89 @@ public class Andmebaas {
             e.printStackTrace();
         }
     }
+
+    public ArrayList getVahemikud() {
+        Statement s = null;
+        ArrayList<int[]> al = new ArrayList<int[]>();
+        try {
+            s = conn.createStatement();
+            ResultSet rs = s.executeQuery("SELECT viimane,esimene,plokimaht FROM plokivahemikud");
+            while(rs.next()) {
+                int kokku = rs.getInt(1) - rs.getInt(2) + 1;
+                int plokimaht = rs.getInt(3);
+                int vabu = kokku;
+                Statement ss = conn.createStatement();
+                ResultSet r = ss.executeQuery("SELECT count(*) FROM plokk WHERE plokk >= "+
+                        rs.getInt(2)+" AND plokk <= "+rs.getInt(1));
+                while(r.next()) {
+                    vabu -= r.getInt(1);
+                }
+                r.close();
+                int[] vahemik = {kokku,vabu,plokimaht};
+                al.add(vahemik);
+
+            }
+            rs.close();
+            return al;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public int getNextPlokk(int plokisuurus) {
+        try {
+            System.out.println("ab getnextplokk");
+            Statement s = conn.createStatement();
+
+            ResultSet rs = s.executeQuery("SELECT esimene,viimane FROM plokivahemikud WHERE plokimaht=" + plokisuurus);
+            int esimene = 0;
+            int viimane= 0;
+            int nextplokk = 0;
+            while (rs.next()) {
+                esimene = rs.getInt(1);
+                viimane = rs.getInt(2);
+                nextplokk = esimene;
+            }
+            rs = s.executeQuery("SELECT plokk FROM plokk WHERE plokk >="+esimene+" AND plokk <="+viimane+" ORDER by plokk DESC");
+            while (rs.next()) {
+                nextplokk = rs.getInt(1)+1;
+            }
+            return nextplokk;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public void seoplokk(Kirjastaja kirjastaja, int nextplokk) {
+        try {
+            System.out.println("ab seoplokk" + nextplokk);
+            PreparedStatement psInsert = conn.prepareStatement("INSERT INTO plokk(kirjastaja_id,plokk,status) VALUES(?,?,?)");
+            psInsert.setInt(1, kirjastaja.getId());
+            psInsert.setInt(2,nextplokk);
+            psInsert.setBoolean(3,true);
+            psInsert.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getPlokkdata(Plokk plokk) {
+        int kirjastajaTunnus = plokk.getTunnus();
+        try {
+            Statement s = conn.createStatement();
+            s.setMaxRows(1);
+            ResultSet rs = s.executeQuery("SELECT raamat FROM isbn WHERE plokk="+kirjastajaTunnus+" ORDER BY raamat DESC");
+            while (rs.next()) {
+                plokk.setLast(rs.getInt(1));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }
 /*DriverManager.getConnection("jdbc:derby:"+"db"+";shutdown=true");*/
