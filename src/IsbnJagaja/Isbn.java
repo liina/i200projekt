@@ -5,13 +5,20 @@ package IsbnJagaja;
  */
 public class Isbn {
     String isbn;
+    int prefix;
+    int riik;
+    int ktunnus;
+    int raamat;
+    int ktrl;
     public Isbn(int tunnus, int raamatuTunnus) {
-        int prefix = 978;
-        int riik = 9985;
+        prefix = 978;
+        riik = 9985;
+        ktunnus = tunnus;
+        raamat = raamatuTunnus;
         String rmt = lisaNullid(raamatuTunnus,tunnus);
         String number = "" + prefix + riik + tunnus + rmt; //kui ei pane "" ette, siis teeb mingi huvitava liitmise
-        int kontrollnumber = arvutaktrlnr(number);
-        isbn = prefix+"-"+riik+"-"+tunnus+"-"+rmt+"-"+kontrollnumber;
+        ktrl = arvutaktrlnr(number);
+        isbn = prefix+"-"+riik+"-"+tunnus+"-"+rmt+"-"+ktrl;
     }
 
     private String lisaNullid(int raamatuTunnus, int tunnus) {
@@ -60,5 +67,11 @@ public class Isbn {
 
     public String getIsbn() {
         return isbn;
+    }
+    public int getKtunnus() {
+        return ktunnus;
+    }
+    public int getRaamat() {
+        return raamat;
     }
 }

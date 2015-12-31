@@ -70,15 +70,15 @@ public class Andmebaas {
 
             s.execute("CREATE TABLE raamat " +
                     "(id INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1)" +
-                    ",plokk_id int, pealkiri varchar(100), autor varchar(100), " +
+                    ", pealkiri varchar(100), autor varchar(100), ilmub int," +
                     " PRIMARY KEY (id))");
-            s.execute("INSERT INTO raamat (pealkiri,autor) VALUES ('Taevatähed','Saar, Ants')");
+            //s.execute("INSERT INTO raamat (pealkiri,autor) VALUES ('Taevatähed','Saar, Ants')");
 
             s.execute("CREATE TABLE isbn " +
                     "(id INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1)" +
                     ", raamat_id int, plokk int, raamat varchar(5), isbn bigint, isbnstr varchar(20)," +
                     " PRIMARY KEY (id))");
-            s.execute("INSERT INTO isbn(raamat_id,plokk,raamat,isbn,isbnstr) VALUES (1,800,'00',9789985800004,'978-9985-800-00-4')");
+            //s.execute("INSERT INTO isbn(raamat_id,plokk,raamat,isbn,isbnstr) VALUES (1,800,'00',9789985800004,'978-9985-800-00-4')");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -204,6 +204,7 @@ public class Andmebaas {
                 viimane = rs.getInt(2);
                 nextplokk = esimene;
             }
+            s.setMaxRows(1);
             rs = s.executeQuery("SELECT plokk FROM plokk WHERE plokk >="+esimene+" AND plokk <="+viimane+" ORDER by plokk DESC");
             while (rs.next()) {
                 nextplokk = rs.getInt(1)+1;
@@ -237,6 +238,7 @@ public class Andmebaas {
             ResultSet rs = s.executeQuery("SELECT raamat FROM isbn WHERE plokk="+kirjastajaTunnus+" ORDER BY raamat DESC");
             while (rs.next()) {
                 plokk.setLast(rs.getInt(1));
+                System.out.println("ab.getPlokkdata"+rs.getInt(1));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -244,5 +246,51 @@ public class Andmebaas {
     }
 
 
+    public void insertRaamat(Raamat raamat) {
+        Isbn isbn = raamat.getIsbn();
+        PreparedStatement psInsert = null;
+        try {
+            psInsert = conn.prepareStatement("INSERT INTO raamat (pealkiri,autor,ilmub) VALUES(?,?,?)", Statement.RETURN_GENERATED_KEYS);
+            psInsert.setString(1,raamat.getPealkiri());
+            psInsert.setString(2,raamat.getAutor());
+            psInsert.setInt(3,raamat.getIlmub());
+            psInsert.executeUpdate();
+            ResultSet rs = psInsert.getGeneratedKeys();
+            int id = 0;
+            if (rs.next()) {
+                id = rs.getInt(1);
+                psInsert = conn.prepareStatement("INSERT INTO isbn (plokk,raamat,isbnstr,raamat_id) VALUES(?,?,?,?)");
+                psInsert.setInt(1,isbn.getKtunnus());
+                psInsert.setInt(2,isbn.getRaamat());
+                psInsert.setString(3,isbn.getIsbn());
+                psInsert.setInt(4,id);
+                psInsert.executeUpdate();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public ArrayList getRmtud(int id) {
+        Statement s = null;
+        ArrayList<Raamat> rmtlist = new ArrayList<Raamat>();
+        try {
+            s = conn.createStatement();
+            ResultSet rs = s.executeQuery("SELECT * FROM plokk LEFT JOIN isbn ON isbn.plokk=plokk.plokk LEFT JOIN raamat ON raamat.id=isbn.raamat_id WHERE kirjastaja_id="+id);
+            while(rs.next()) {
+                for (int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++) {
+
+                    System.out.println(" " + rs.getMetaData().getColumnName(i) + "=" + rs.getObject(i));
+                }
+                Raamat rmt = new Raamat(rs.getString(12),rs.getString(13),rs.getInt(14));
+                rmt.setIsbnstring(rs.getString(10));
+                rmtlist.add(rmt);
+                            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return rmtlist;
+    }
 }
 /*DriverManager.getConnection("jdbc:derby:"+"db"+";shutdown=true");*/
