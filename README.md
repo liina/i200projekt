@@ -1,6 +1,18 @@
 # i200projekt - ISBN generaator
-Kasutajaks on kirjastaja
-Saab valida vabade kirjastustunnuste seast ja selle endaga siduda.
-Saab genereerida listi kõikidest selle kirjastajatunnuse sisse käivatest raamatutunnustest.
-Saab kontrollida suvalise ISBN numbri valiidsust
-Saab genereerida triipkoodi.
+Kasutajaks on ISBN agentuuri töötaja
+Saab luua uue kirjastaja või valida olemasolevate seast.
+Saab kirjastajaga siduda sobiva mahuga ISBN kirjastajaploki.
+Peab järge vabade kirjastajaplokkide üle.
+Saab raamatule isbn-i määrata.
+Peab järge vabade raamatutunnuste üle kirjastajaploki sees.
+
+Objektid:
+Andmebaas - meetodid ab päringute tegemiseks
+Isbn - meetodid korrektse isbn kokkupanemiseks, kontrollnumbri arvutamine
+Kirjastaja -
+Plokk
+Raamat -
+
+Edasised arendused:
+Sisestatavate andmete kontroll - kas kõik väljad on täidetud, ega pole sisestatud rohkem sümboleid kui ab väli lubab jne.
+Triipkoodi genereeerimine.

@@ -20,15 +20,16 @@ public class Andmebaas {
 
     }
 
-
     private void looYhendus() { // loob Connectioni ja teeb ab, kui seda veel ei ole
         try {
+            //territory  ja collation on vajalikud, et sorteerimine käiks õigesti
             conn = DriverManager.getConnection("jdbc:derby:isbnbaas;create=true;territory=et_EE;collation=TERRITORY_BASED");
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
     public void sisestaNaidisandmed() {
+        //teeb ab ja sisestab näidisandmed
         int[] kirjastustunnused = {50, 79, 800, 899, 9000, 9999};
         int prefix = 978;
         int maatunnus = 9985;
@@ -76,7 +77,7 @@ public class Andmebaas {
 
             s.execute("CREATE TABLE isbn " +
                     "(id INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1)" +
-                    ", raamat_id int, plokk int, raamat varchar(5), isbn bigint, isbnstr varchar(20)," +
+                    ", raamat_id int, plokk int, raamat int, isbn bigint, isbnstr varchar(20)," +
                     " PRIMARY KEY (id))");
             //s.execute("INSERT INTO isbn(raamat_id,plokk,raamat,isbn,isbnstr) VALUES (1,800,'00',9789985800004,'978-9985-800-00-4')");
         } catch (SQLException e) {
@@ -84,7 +85,9 @@ public class Andmebaas {
         }
     }
 
+
     public void naitaAndmeid() {
+        //meetod ab sisuga tutvumiseks
         Statement s = null;
         try {
             s = conn.createStatement();
@@ -98,7 +101,6 @@ public class Andmebaas {
             rs = s.executeQuery("SELECT * FROM kirjastaja");
             while(rs.next()) {
                 for (int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++) {
-
                     System.out.print(" " + rs.getMetaData().getColumnName(i) + "=" + rs.getObject(i));
                 }
                 System.out.println("");
@@ -110,10 +112,10 @@ public class Andmebaas {
     }
 
     public ArrayList getAllKirjastajad() {
-        Statement s = null;
+        //tagastab listi kõikide ab-s olevate kirjastajatega
         ArrayList<Kirjastaja> kirjastajalist = new ArrayList<Kirjastaja>();
         try {
-            s = conn.createStatement();
+            Statement s = conn.createStatement();
             ResultSet rs = s.executeQuery("SELECT * FROM kirjastaja ORDER by nimi");
             while(rs.next()) {
                 Kirjastaja kirjastaja = new Kirjastaja();
@@ -128,13 +130,15 @@ public class Andmebaas {
         return kirjastajalist;
     }
 
-    public int lisaKirjastaja(String uusnimi, String kontakt) {
+    public int lisaKirjastaja(String nimi, String kontakt) {
+        //siia peaks tulema kontroll, et nimi ja kontakt ei ületaks ab-s lubatud pikkust
         try {
-            PreparedStatement psInsert = conn.prepareStatement("INSERT INTO kirjastaja(nimi,kontakt) VALUES(?,?)", Statement.RETURN_GENERATED_KEYS);
-            psInsert.setString(1,uusnimi);
+            //Statement.RETURN_GENERATED_KEYS - tahame tagasi saada sisestatud kirjastaja id (autoincrement)
+            PreparedStatement psInsert = conn.prepareStatement("INSERT INTO kirjastaja(nimi,kontakt) VALUES(?,?)",
+                    Statement.RETURN_GENERATED_KEYS);
+            psInsert.setString(1,nimi);
             psInsert.setString(2,kontakt);
-            int rows = psInsert.executeUpdate();
-
+            psInsert.executeUpdate();
             ResultSet rs = psInsert.getGeneratedKeys();
             int id = 0;
             if (rs.next()) {
@@ -147,54 +151,55 @@ public class Andmebaas {
         return 0;
     }
 
-
-    public void getJooksevPlokk(Kirjastaja kirjastaja) {
-        Statement s = null;
+    public int getJooksevPlokk(int kirjastaja_id) {
+        int jooksevplokk = 0;
         try {
-            s = conn.createStatement();
-            ResultSet rs = s.executeQuery("SELECT plokk FROM plokk WHERE kirjastaja_id="+kirjastaja.getId()+" AND status=TRUE");
+            Statement s = conn.createStatement();
+            ResultSet rs = s.executeQuery("SELECT plokk FROM plokk WHERE kirjastaja_id=" + kirjastaja_id +" AND status=TRUE");
             while(rs.next()) {
-                kirjastaja.setPlokk(rs.getInt(1));
+                jooksevplokk = (rs.getInt(1));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return jooksevplokk;
     }
 
     public ArrayList getVahemikud() {
-        Statement s = null;
-        ArrayList<int[]> al = new ArrayList<int[]>();
+        //tagastab kirjastajaplokkide vahemikud ja vabade plokkide arvu igas vahemikus
+        ArrayList<int[]> vahemikud = new ArrayList<int[]>();
         try {
-            s = conn.createStatement();
+            Statement s = conn.createStatement();
             ResultSet rs = s.executeQuery("SELECT viimane,esimene,plokimaht FROM plokivahemikud");
             while(rs.next()) {
                 int kokku = rs.getInt(1) - rs.getInt(2) + 1;
                 int plokimaht = rs.getInt(3);
                 int vabu = kokku;
+                //pärib plokk tabelist antud vahemiku plokkide arvu(need on juba mõne kirjastajaga seotud plokid
+                // ja arvestab saadud arvu vabade plokkide hulgast maha
                 Statement ss = conn.createStatement();
-                ResultSet r = ss.executeQuery("SELECT count(*) FROM plokk WHERE plokk >= "+
+                ResultSet rrs = ss.executeQuery("SELECT count(*) FROM plokk WHERE plokk >= "+
                         rs.getInt(2)+" AND plokk <= "+rs.getInt(1));
-                while(r.next()) {
-                    vabu -= r.getInt(1);
+                while(rrs.next()) {
+                    vabu -= rrs.getInt(1);
                 }
-                r.close();
+                rrs.close();
                 int[] vahemik = {kokku,vabu,plokimaht};
-                al.add(vahemik);
+                vahemikud.add(vahemik);
 
             }
             rs.close();
-            return al;
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return vahemikud;
     }
 
     public int getNextPlokk(int plokisuurus) {
+        //tagastab järgmise kirjastajaploki küsitud suurusega vahemikust või feili korral tagastab 0-i,
+        // nt. kui kõik selle vahemiku plokid on juba võetud
         try {
-            System.out.println("ab getnextplokk");
             Statement s = conn.createStatement();
-
             ResultSet rs = s.executeQuery("SELECT esimene,viimane FROM plokivahemikud WHERE plokimaht=" + plokisuurus);
             int esimene = 0;
             int viimane= 0;
@@ -215,42 +220,50 @@ public class Andmebaas {
         }
         return 0;
     }
-
+    public void vanaplokk(int plokk) {
+        //muudab ploki staatuse
+        try {
+            PreparedStatement s = conn.prepareStatement("UPDATE plokk SET status=false WHERE plokk=" + plokk);
+            s.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
     public void seoplokk(Kirjastaja kirjastaja, int nextplokk) {
+        //sisestab tabelisse plokk uue kirjastaja-plokk seose
         try {
             System.out.println("ab seoplokk" + nextplokk);
             PreparedStatement psInsert = conn.prepareStatement("INSERT INTO plokk(kirjastaja_id,plokk,status) VALUES(?,?,?)");
-            psInsert.setInt(1, kirjastaja.getId());
+            psInsert.setInt(1,kirjastaja.getId());
             psInsert.setInt(2,nextplokk);
             psInsert.setBoolean(3,true);
             psInsert.executeUpdate();
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void getPlokkdata(Plokk plokk) {
-        int kirjastajaTunnus = plokk.getTunnus();
+    public int getLastinPlokk(int plokk) {
+        //küsib viimasena välja antud raamatutunnuse antud plokist
+        int last = -1;
         try {
             Statement s = conn.createStatement();
             s.setMaxRows(1);
-            ResultSet rs = s.executeQuery("SELECT raamat FROM isbn WHERE plokk="+kirjastajaTunnus+" ORDER BY raamat DESC");
+            ResultSet rs = s.executeQuery("SELECT raamat FROM isbn WHERE plokk=" + plokk + " ORDER BY raamat DESC");
             while (rs.next()) {
-                plokk.setLast(rs.getInt(1));
-                System.out.println("ab.getPlokkdata"+rs.getInt(1));
+                last = rs.getInt(1);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return last;
     }
 
-
     public void insertRaamat(Raamat raamat) {
+        //sisestab raamatuandmed sh isbn-i tabelitesse raamat ja isbn
         Isbn isbn = raamat.getIsbn();
-        PreparedStatement psInsert = null;
         try {
-            psInsert = conn.prepareStatement("INSERT INTO raamat (pealkiri,autor,ilmub) VALUES(?,?,?)", Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement psInsert = conn.prepareStatement("INSERT INTO raamat (pealkiri,autor,ilmub) VALUES(?,?,?)", Statement.RETURN_GENERATED_KEYS);
             psInsert.setString(1,raamat.getPealkiri());
             psInsert.setString(2,raamat.getAutor());
             psInsert.setInt(3,raamat.getIlmub());
@@ -260,33 +273,34 @@ public class Andmebaas {
             if (rs.next()) {
                 id = rs.getInt(1);
                 psInsert = conn.prepareStatement("INSERT INTO isbn (plokk,raamat,isbnstr,raamat_id) VALUES(?,?,?,?)");
-                psInsert.setInt(1,isbn.getKtunnus());
-                psInsert.setInt(2,isbn.getRaamat());
+                psInsert.setInt(1,isbn.getKirjastajaplokk());
+                psInsert.setInt(2,isbn.getRmttunnus());
                 psInsert.setString(3,isbn.getIsbn());
                 psInsert.setInt(4,id);
                 psInsert.executeUpdate();
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     public ArrayList getRmtud(int id) {
-        Statement s = null;
+        //tagastab kõik raamatud antud kirjastajaga seotud plokkidest
         ArrayList<Raamat> rmtlist = new ArrayList<Raamat>();
         try {
-            s = conn.createStatement();
-            ResultSet rs = s.executeQuery("SELECT * FROM plokk LEFT JOIN isbn ON isbn.plokk=plokk.plokk LEFT JOIN raamat ON raamat.id=isbn.raamat_id WHERE kirjastaja_id="+id);
+            Statement s = conn.createStatement();
+            ResultSet rs = s.executeQuery("SELECT * FROM plokk LEFT JOIN isbn ON isbn.plokk=plokk.plokk " +
+                    "INNER JOIN raamat ON raamat.id=isbn.raamat_id WHERE kirjastaja_id="+id);
             while(rs.next()) {
+                /*
                 for (int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++) {
-
                     System.out.println(" " + rs.getMetaData().getColumnName(i) + "=" + rs.getObject(i));
                 }
+                */
                 Raamat rmt = new Raamat(rs.getString(12),rs.getString(13),rs.getInt(14));
                 rmt.setIsbnstring(rs.getString(10));
                 rmtlist.add(rmt);
-                            }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

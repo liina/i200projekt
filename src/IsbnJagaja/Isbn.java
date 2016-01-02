@@ -7,39 +7,45 @@ public class Isbn {
     String isbn;
     int prefix;
     int riik;
-    int ktunnus;
-    int raamat;
+    int kirjastajaplokk;
+    int rmttunnus;
     int ktrl;
-    public Isbn(int tunnus, int raamatuTunnus) {
+    public Isbn(int kirjastajaplokk, int rmttunnus) {
+        //prefix ja riik võiks ka olla ab-s, aga
+        //prefix ja riik on põhimõtteliselt peaaegu konstandid - muutuvad aastate pärast võib-olla
         prefix = 978;
         riik = 9985;
-        ktunnus = tunnus;
-        raamat = raamatuTunnus;
-        String rmt = lisaNullid(raamatuTunnus,tunnus);
-        String number = "" + prefix + riik + tunnus + rmt; //kui ei pane "" ette, siis teeb mingi huvitava liitmise
+        this.kirjastajaplokk = kirjastajaplokk;
+        this.rmttunnus = rmttunnus;
+        //raamatutunnusele tuleb vajalik arv nulle lisada
+        String rmt = lisaNullid(rmttunnus,kirjastajaplokk);
+        //paneb kõik tunnused kokku üheks stringiks - kui ei pane "" ette, siis teeb mingi huvitava liitmise
+        String number = "" + prefix + riik + kirjastajaplokk + rmt;
+        //arvutab kontrollnumbri
         ktrl = arvutaktrlnr(number);
-        isbn = prefix+"-"+riik+"-"+tunnus+"-"+rmt+"-"+ktrl;
+        isbn = prefix+"-"+riik+"-"+kirjastajaplokk+"-"+rmt+"-"+ktrl;
     }
 
-    private String lisaNullid(int raamatuTunnus, int tunnus) {
-        //tuleb leida mitmekohaline number ktunnus on, sellest s�ltub mitmekohaline saab olla raamatutunnus
+    private String lisaNullid(int rmttunnus, int kirjastajaplokk) {
+        //tuleb leida mitmekohaline number ktunnus on, sellest sõltub mitmekohaline saab olla raamatutunnus
         //variant 1 - parsida ktunnus stringiks ja leida stringi pikkus
-        int kpikkus = (Integer.toString(tunnus)).length();
-        //isbn kokku 13 numbrit, prefix+riigitunnus v�tab 7 kohta, kontrollnumber v�tab 1 koha, kirjastustunnuse ja raamatutunnse peale kokku j��b 5 kohta
-        int rpikkus = 5 - kpikkus; //raamatutunnuse pikkuseks j��b 5-kirjastustnnus
-        System.out.println("rpikkus " + rpikkus);
-        int lisanull; //rtunnuse ette on vaja lisada nulle, et raamatutunnuses oleks �ige arv m�rke
-        lisanull = rpikkus-Integer.toString(raamatuTunnus).length();
-        String rmt = Integer.toString(raamatuTunnus);
-        if (lisanull > 0) { //kui on v�hem kohti kui rmttunnuse jaoks etten�htud, siis
+        int kpikkus = (Integer.toString(kirjastajaplokk)).length();
+        //isbn kokku 13 numbrit, prefix+riigitunnus võtab 7 kohta, kontrollnumber võtab 1 koha,
+        // kirjastustunnuse ja raamatutunnse peale kokku jääb 5 kohta
+        int rpikkus = 5 - kpikkus; //raamatutunnuse pikkuseks jääb 5-kirjastustunnus
+        int lisanull; //rtunnuse ette on vaja lisada nulle, et raamatutunnuses oleks õige arv märke
+        lisanull = rpikkus-Integer.toString(rmttunnus).length();
+        String rmt = Integer.toString(rmttunnus);
+        if (lisanull > 0) { //kui on vähem kohti kui rmttunnuse jaoks ettenähtud, siis
             String nll = "0";
             lisanull--;
             while (lisanull > 0){
                 nll = nll + "0";
                 lisanull--;
             }
-            rmt = nll+ rmt; //lisab ette niimitu 0, kuipalju on vaja, et raamatutunnuses oleks �ige arv m�rke
+            rmt = nll+ rmt; //lisab ette niimitu 0, kuipalju on vaja, et raamatutunnuses oleks õige arv märke
         }
+        //ilmselt saaks eelneva tsükli asemel kasutada mingit stringiformattimis funktsiooni
         return rmt;
     }
 
@@ -49,9 +55,9 @@ public class Isbn {
         //ktrl numbri algoritm
         //korrutab iga paarispositsioonil oleva numbri 1-ga
         //ja paaritul positsioonil 3-ga. Liidab kokku,
-        //leiab j��gi summa jagamisel 10-ga,
-        //lahutab saadud j��gi 10-st,
-        //saadud arvu 10-ga jagamisel saadud j��k ongi kontrollnumber
+        //leiab jäägi summa jagamisel 10-ga,
+        //lahutab saadud jäägi 10-st,
+        //saadud arvu 10-ga jagamisel saadud jääk ongi kontrollnumber
         for (int i = 0;i < number.length(); i++){
             int t = Character.getNumericValue(number.charAt(i));
             if (i%2 == 0) {
@@ -68,10 +74,8 @@ public class Isbn {
     public String getIsbn() {
         return isbn;
     }
-    public int getKtunnus() {
-        return ktunnus;
-    }
-    public int getRaamat() {
-        return raamat;
+    public int getKirjastajaplokk() { return kirjastajaplokk;}
+    public int getRmttunnus() {
+        return rmttunnus;
     }
 }

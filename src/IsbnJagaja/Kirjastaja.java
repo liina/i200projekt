@@ -8,17 +8,17 @@ public class Kirjastaja {
     String nimi;
     String kontakt;
     int jooksevplokk;
-    public void setId (int uusid) {
-        id=uusid;
+    public void setId (int id) {
+        this.id=id;
     }
     public int getId () {
         return id;
     }
-    public void setNimi (String uusnimi) {
-        nimi=uusnimi;
+    public void setNimi (String nimi) {
+        this.nimi=nimi;
     }
-    public void setKontakt(String uuskontakt) {
-        kontakt=uuskontakt;
+    public void setKontakt(String kontakt) {
+        this.kontakt=kontakt;
     }
     public String getNimi () {
         return nimi;
@@ -26,8 +26,8 @@ public class Kirjastaja {
     public String getKontakt() {
         return kontakt;
     }
-    public void setPlokk(int uusplokk) {
-        jooksevplokk = uusplokk;
+    public void setPlokk(int jooksevplokk) {
+        this.jooksevplokk = jooksevplokk;
     }
     public int getPlokk () {
         return jooksevplokk;
