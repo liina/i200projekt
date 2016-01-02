@@ -232,7 +232,6 @@ public class Andmebaas {
     public void seoplokk(Kirjastaja kirjastaja, int nextplokk) {
         //sisestab tabelisse plokk uue kirjastaja-plokk seose
         try {
-            System.out.println("ab seoplokk" + nextplokk);
             PreparedStatement psInsert = conn.prepareStatement("INSERT INTO plokk(kirjastaja_id,plokk,status) VALUES(?,?,?)");
             psInsert.setInt(1,kirjastaja.getId());
             psInsert.setInt(2,nextplokk);

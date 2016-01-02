@@ -92,8 +92,7 @@ public class Main extends Application {
                 valiplokk(kirjastaja);
             } else {
                 //kui plokis on vabu numbreid, siis laadi raamatuvorm
-                System.out.println("on hoopis siin");
-                laadiraamat(kirjastaja);
+               laadiraamat(kirjastaja);
             }
         }
     }
@@ -164,7 +163,6 @@ public class Main extends Application {
         if (jooksevplokk != 0) {
             kirjastaja.setPlokk(jooksevplokk);
             Plokk plokk = new Plokk(kirjastaja.getPlokk());
-            System.out.println("plokk last " + plokk.getLast());
             //küsib ab-st viimase raamatutunnuse, mis selles plokis hõivatud on ja annab väärtuse Ploki muutujale last
             int last = ab.getLastinPlokk(plokk.getKirjastajaplokk());
             plokk.setLast(last);
@@ -241,7 +239,6 @@ public class Main extends Application {
         uuskrstjanupp.setOnAction(e -> {
             //sisestab ab-sse uue kirjastaja nime ja kontakti, vastu saab kirjastaja id
             int id = ab.lisaKirjastaja(nimi.getText(), kontakt.getText());
-            System.out.println("uus kirjastaja id on "+id);
             //loob kirjastaja objekti
             Kirjastaja kirjastaja = new Kirjastaja();
             kirjastaja.setId(id);
@@ -252,7 +249,6 @@ public class Main extends Application {
             //laadib uuesti vasaku vboxi, et seal kajastuks ka uus kirjastaja
             VBox leftvbox = makeLeftvbox();
             paan.setLeft(leftvbox);
-            System.out.println("tegi uue kirjastaja id " + id);
         });
         vbox.getChildren().addAll(nimi,kontakt,uuskrstjanupp);
         vbox.setSpacing(10);
@@ -285,7 +281,6 @@ public class Main extends Application {
                                 Toggle old_toggle, Toggle new_toggle) {
                 int plokimaht = (Integer) numbrid.getSelectedToggle().getUserData();
                 int nextplokk = ab.getNextPlokk(plokimaht);
-                System.out.println("toggle sees nextplokk " + nextplokk);
                 //seob kirjastajaga uue ploki
                 ab.seoplokk(kirjastaja,nextplokk);
                 kirjastaja.setPlokk(nextplokk);
