@@ -1,10 +1,26 @@
 # i200projekt - ISBN generaator
+ISBN (International Standard Book Number) on rahvusvahelise ISBN agentuuri poolt hallatav standard.<br>
+Number on 13-kohaline ja koosneb viiest osast: prefix-riigitunnus-rühmatunnus-raamatutunnus-kontrollnumber.<br>
+ISBN vahemikud iga riigi jaoks saab siit https://www.isbn-international.org/export_rangemessage.xml<br>
+Riigile kuuluvaid rühmatunnuseid (kirjastajaplokke) jagab kirjastajatele iga riigi vastav agentuur.<br>
+978-9985 - prefix ja Eesti riigitunnus<br>
+Eestile eraldatud rühmatunnused (kirjastajaplokid) on:<br>
+ 0-4<br>
+ 50-79<br>
+ 800-899<br>
+ 9000-9999<br>
+ 
+Vastavalt rühmatunnuse kohtade arvule jääb raamatutunnuse jaoks 1-4 kohta. Seega mahub iga rühmatunnuse sisse 10, 100,1000 või 10000 raamatutunnust. Näiteks, kui rühmatunnus on 9000, siis jääb raamatutunnuse jaoks 1 koht, mille väärtus saab olla 0-9, kokku 10 võimalikku arvu. Kui rühmatunnus on 50, on raamatutunnus 3-kohaline, igal kohal võib olla arv 0-9 - seega 10 astmel 3 ehk 1000
+ 
+Viimane ehk kontrollnumber arvutatakse algoritmi järgi, mis on leitav siit:<br> https://www.isbn-international.org/sites/default/files/Manual_Estonian_2013.pdf Lk. 27
+ 
+
 Kasutajaks on ISBN agentuuri töötaja
 - Saab luua uue kirjastaja või valida olemasolevate seast.
 - Saab kirjastajaga siduda sobiva mahuga ISBN kirjastajaploki.
 - Peab järge vabade kirjastajaplokkide üle.
 - Saab raamatule isbn-i määrata.
-- Peab järge vabade raamatutunnuste üle kirjastajaploki sees.
+- Peab järge vabade raamatutunnuste üle kirjastajaploki sees, kui vabu raamatutunnuseid ei ole, sunnib valima uut kirjastajaplokki
 
 Objektid:
 - Andmebaas - meetodid ab päringute tegemiseks
