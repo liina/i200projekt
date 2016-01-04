@@ -28,6 +28,7 @@ public class Andmebaas {
             e.printStackTrace();
         }
     }
+
     public void sisestaNaidisandmed() {
         //teeb ab ja sisestab näidisandmed
         int[] kirjastustunnused = {50, 79, 800, 899, 9000, 9999};
@@ -170,7 +171,7 @@ public class Andmebaas {
         ArrayList<int[]> vahemikud = new ArrayList<int[]>();
         try {
             Statement s = conn.createStatement();
-            ResultSet rs = s.executeQuery("SELECT viimane,esimene,plokimaht FROM plokivahemikud");
+            ResultSet rs = s.executeQuery("SELECT viimane,esimene,plokimaht FROM plokivahemikud ORDER BY plokimaht DESC");
             while(rs.next()) {
                 int kokku = rs.getInt(1) - rs.getInt(2) + 1;
                 int plokimaht = rs.getInt(3);
@@ -223,8 +224,8 @@ public class Andmebaas {
     public void vanaplokk(int plokk) {
         //muudab ploki staatuse
         try {
-            PreparedStatement s = conn.prepareStatement("UPDATE plokk SET status=false WHERE plokk=" + plokk);
-            s.executeUpdate();
+            PreparedStatement ps = conn.prepareStatement("UPDATE plokk SET status=false WHERE plokk=" + plokk);
+            ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
