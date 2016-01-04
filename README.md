@@ -4,7 +4,7 @@ Number on 13-kohaline ja koosneb viiest osast: prefix-rühmatunnus-kirjastustunn
 ISBN vahemikud iga riigi jaoks saab siit https://www.isbn-international.org/export_rangemessage.xml<br>
 Riigile kuuluvaid kirjastustunnuseid (kirjastajaplokke) jagab kirjastajatele iga riigi vastav agentuur.<br>
 978-9985 - prefix ja Eesti rühmatunnus (riigitunnus)<br>
-Eestile eraldatud rühmatunnused (kirjastajaplokid) on:<br>
+Eestile eraldatud kirjastustunnused (kirjastajaplokid) on:<br>
  0-4<br>
  50-79<br>
  800-899<br>
