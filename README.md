@@ -1,4 +1,6 @@
 # i200projekt - ISBN generaator
+###Liina Abner DK14
+
 ISBN (International Standard Book Number) on rahvusvahelise ISBN agentuuri poolt hallatav standard.<br>
 Number on 13-kohaline ja koosneb viiest osast: prefix-rühmatunnus-kirjastustunnus-raamatutunnus-kontrollnumber.<br>
 ISBN vahemikud iga riigi jaoks saab siit https://www.isbn-international.org/export_rangemessage.xml<br>
