@@ -38,6 +38,7 @@ Tabelid
 - plokivahemikud
 - kirjastaja
 - plokk
+- isbn
 - raamat
 
 Edasised arendused:
