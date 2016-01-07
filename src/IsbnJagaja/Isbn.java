@@ -34,7 +34,11 @@ public class Isbn {
         // kirjastustunnuse ja raamatutunnse peale kokku jääb 5 kohta
         int rpikkus = 5 - kpikkus; //raamatutunnuse pikkuseks jääb 5-kirjastustunnus
         int lisanull; //rtunnuse ette on vaja lisada nulle, et raamatutunnuses oleks õige arv märke
+        int varunr = rmttunnus;
         lisanull = rpikkus-Integer.toString(rmttunnus).length();
+        int l = lisanull+1;
+        String s = String.format("%0"+l+"d",rmttunnus);
+        System.out.println("s "+s+" lisanull "+lisanull);
         String rmt = Integer.toString(rmttunnus);
         if (lisanull > 0) { //kui on vähem kohti kui rmttunnuse jaoks ettenähtud, siis
             String nll = "0";
@@ -46,6 +50,7 @@ public class Isbn {
             rmt = nll+ rmt; //lisab ette niimitu 0, kuipalju on vaja, et raamatutunnuses oleks õige arv märke
         }
         //ilmselt saaks eelneva tsükli asemel kasutada mingit stringiformattimis funktsiooni
+
         return rmt;
     }
 
