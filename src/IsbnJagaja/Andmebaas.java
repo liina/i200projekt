@@ -86,32 +86,6 @@ public class Andmebaas {
         }
     }
 
-
-    public void naitaAndmeid() {
-        //meetod ab sisuga tutvumiseks
-        Statement s = null;
-        try {
-            s = conn.createStatement();
-            ResultSet rs = s.executeQuery("SELECT * FROM plokivahemikud");
-            while(rs.next()) {
-                for (int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++) {
-                    System.out.print(" " + rs.getMetaData().getColumnName(i) + "=" + rs.getObject(i));
-                }
-                System.out.println("");
-            }
-            rs = s.executeQuery("SELECT * FROM kirjastaja");
-            while(rs.next()) {
-                for (int i = 1; i < rs.getMetaData().getColumnCount() + 1; i++) {
-                    System.out.print(" " + rs.getMetaData().getColumnName(i) + "=" + rs.getObject(i));
-                }
-                System.out.println("");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-    }
-
     public ArrayList getAllKirjastajad() {
         //tagastab listi kõikide ab-s olevate kirjastajatega
         ArrayList<Kirjastaja> kirjastajalist = new ArrayList<Kirjastaja>();
@@ -133,14 +107,16 @@ public class Andmebaas {
 
     public int lisaKirjastaja(String nimi, String kontakt) {
         //siia peaks tulema kontroll, et nimi ja kontakt ei ületaks ab-s lubatud pikkust
+        nimi = lyhendaKuiVaja(40,nimi);
+        kontakt = lyhendaKuiVaja(40,kontakt);
         try {
             //Statement.RETURN_GENERATED_KEYS - tahame tagasi saada sisestatud kirjastaja id (autoincrement)
-            PreparedStatement psInsert = conn.prepareStatement("INSERT INTO kirjastaja(nimi,kontakt) VALUES(?,?)",
+            PreparedStatement ps = conn.prepareStatement("INSERT INTO kirjastaja(nimi,kontakt) VALUES(?,?)",
                     Statement.RETURN_GENERATED_KEYS);
-            psInsert.setString(1,nimi);
-            psInsert.setString(2,kontakt);
-            psInsert.executeUpdate();
-            ResultSet rs = psInsert.getGeneratedKeys();
+            ps.setString(1,nimi);
+            ps.setString(2,kontakt);
+            ps.executeUpdate();
+            ResultSet rs = ps.getGeneratedKeys();
             int id = 0;
             if (rs.next()) {
                 id = rs.getInt(1);
@@ -187,7 +163,6 @@ public class Andmebaas {
                 rrs.close();
                 int[] vahemik = {kokku,vabu,plokimaht};
                 vahemikud.add(vahemik);
-
             }
             rs.close();
         } catch (SQLException e) {
@@ -264,8 +239,10 @@ public class Andmebaas {
         Isbn isbn = raamat.getIsbn();
         try {
             PreparedStatement psInsert = conn.prepareStatement("INSERT INTO raamat (pealkiri,autor,ilmub) VALUES(?,?,?)", Statement.RETURN_GENERATED_KEYS);
-            psInsert.setString(1,raamat.getPealkiri());
-            psInsert.setString(2,raamat.getAutor());
+            String pealkiri = lyhendaKuiVaja(100,raamat.getPealkiri());
+            String autor = lyhendaKuiVaja(100,raamat.getAutor());
+            psInsert.setString(1,pealkiri);
+            psInsert.setString(2,autor);
             psInsert.setInt(3,raamat.getIlmub());
             psInsert.executeUpdate();
             ResultSet rs = psInsert.getGeneratedKeys();
@@ -305,6 +282,14 @@ public class Andmebaas {
             e.printStackTrace();
         }
         return rmtlist;
+    }
+
+    public String lyhendaKuiVaja(int i, String str) {
+        String parasstring = str;
+        if (str.length() > i) {
+            parasstring = str.substring(0,i);
+        }
+        return parasstring;
     }
 }
 /*DriverManager.getConnection("jdbc:derby:"+"db"+";shutdown=true");*/

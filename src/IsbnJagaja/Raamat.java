@@ -33,7 +33,6 @@ public class Raamat {
     public String getIsbnstring() {
         return isbnstring;
     }
-
     public int getIlmub() {
         return ilmub;
     }

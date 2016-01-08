@@ -33,7 +33,6 @@ Objektid:
 
 Andmebaas:
 - Apache Derby
-
 Tabelid
 - plokivahemikud
 - kirjastaja
@@ -42,6 +41,6 @@ Tabelid
 - raamat
 
 Edasised arendused:
-- Sisestatavate andmete kontroll - kas kõik väljad on täidetud, ega pole sisestatud rohkem sümboleid kui ab väli lubab jne.
-- Triipkoodi genereeerimine.
+- Triipkoodi genereerimine
+- Muid funktsioone ja vaateid
 - GUI ilustamine

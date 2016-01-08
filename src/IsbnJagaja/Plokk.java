@@ -18,7 +18,7 @@ public class Plokk {
 
     public void setLast(int last) {
         this.last = last;
-        vabu = arvutaVabu(); //iga kord kui viimane number muutub, tuleb vabade arvümber arvutada
+        vabu = arvutaVabu(); //iga kord kui viimane number muutub, tuleb vabade arv ümber arvutada
     }
 
     private int arvutaVabu() {

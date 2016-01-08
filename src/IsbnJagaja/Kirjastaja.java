@@ -7,7 +7,7 @@ public class Kirjastaja {
     int id;
     String nimi;
     String kontakt;
-    int jooksevplokk;
+    int jooksevplokk; //või peaks siis panema Plokk
     public void setId (int id) {
         this.id=id;
     }

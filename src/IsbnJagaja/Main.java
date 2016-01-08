@@ -13,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
@@ -31,13 +32,20 @@ public class Main extends Application {
         //ab.sisestaNaidisandmed(); //vajalik andmebaasi näidisandmetega populeerimiseks
         aken = primaryStage;
         paan = new BorderPane();
-        //paan.setPadding(new Insets(20,20, 20, 20));
         skeene = new Scene(paan,600,500);
         aken.setTitle("ISBN Register");
         VBox leftvbox = makeLeftvbox();
         paan.setLeft(leftvbox);
         HBox topbox = new HBox();
         topbox.setPrefHeight(60);
+        VBox centerbox = new VBox();
+        centerbox.getChildren().add(new Label("Prefix - Rühm - Kirjastaja - Raamat - Kontrollnumber"));
+        Label isbnsample = new Label("978-9985-1-0002-8");
+        isbnsample.setFont(new Font("Arial", 30));
+        centerbox.getChildren().add(isbnsample);
+        centerbox.setPadding(new Insets(50, 0, 0, 20));
+        centerbox.setSpacing(10);
+        paan.setCenter(centerbox);
         paan.setTop(topbox);
         aken.setScene(skeene);
         aken.show();
@@ -58,7 +66,7 @@ public class Main extends Application {
         }
         kirjastajabox.setItems(list);
         kirjastajabox.setPromptText("Vali Kirjastaja");
-        //Comboboxis uue väärtuse valimisel laaditakse põhitegevuste vorm
+        //Comboboxis uue väärtuse valimisel laaditakse põhitegevuste vorm valitud kirjastaja jaoks
         kirjastajabox.setOnAction((event) -> {
             Kirjastaja kirjastaja = kirjastajabox.getSelectionModel().getSelectedItem();
             //laadikirjastajapaan(kirjastaja);
@@ -70,7 +78,6 @@ public class Main extends Application {
         VBox vbox = new VBox();
         vbox.setSpacing(10);
         vbox.setPadding(new Insets(50,20,10,20));
-        //vbox.setStyle("-fx-background-color: #336699;");
         vbox.getChildren().addAll(lisakirjastajanupp,kirjastajabox);
         return vbox;
     }
@@ -153,8 +160,8 @@ public class Main extends Application {
 
     private HBox makeTopbox (Kirjastaja kirjastaja){
         HBox topbox = new HBox();
-        VBox kirjastajaandmed = new VBox(new Label("Kirjastaja ID:    " + kirjastaja.getId()),
-                new Label("Kirjastaja nimi:  " + kirjastaja.getNimi()),
+        VBox kirjastajaandmed = new VBox(new Label("Kirjastaja ID: " + kirjastaja.getId()),
+                new Label("Kirjastaja nimi: " + kirjastaja.getNimi()),
                 new Label("Kirjastaja e-post: " + kirjastaja.getKontakt()));
         topbox.getChildren().add(kirjastajaandmed);
         VBox plokiandmed = new VBox(new Label("Kirjastajaplokk: -"),
@@ -275,7 +282,7 @@ public class Main extends Application {
             togglebox.getChildren().add(rb);
         }
         paan.setCenter(togglebox);
-        //oracle.com - addListener
+        //oracle.com - addListener-i tutorial
         numbrid.selectedToggleProperty().addListener(new ChangeListener<Toggle>(){
             public void changed(ObservableValue<? extends Toggle> ov,
                                 Toggle old_toggle, Toggle new_toggle) {
